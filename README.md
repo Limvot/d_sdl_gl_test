@@ -1,4 +1,4 @@
-d_sdl_gl_test
+D, SDL2, OpenGL
 =============
 
 SDL2 and OpenGL tests with the D programming language and Derelict bindings.
