@@ -40,7 +40,14 @@ void main() {
     }
 
     //Create the OpenGL context
+    SDL_ClearError();
     glcontext = SDL_GL_CreateContext(window);
+    const char *error = SDL_GetError();
+    if (*error != '\0') {
+        printf("SDL Error creating OpenGL context: %s", error);
+        SDL_ClearError();
+        return;
+    }
 
     //Load OpenGL versions 1.2+ and all supported ARB and EXT extensions
     DerelictGL3.reload();
@@ -118,7 +125,7 @@ GLuint makeShaders(string vertShaderSource, string fragShaderSource) {
     writeln("Compiling Vertex Shader");
     const GLchar* vertCStrPtr = vertShaderSource.toStringz();
     debug writeln("Vertex Shader: ", vertShaderSource); 
-    glShaderSource(vertShaderID, 1, &vertCStrPtr, cast(GLint*)0);
+    glShaderSource(vertShaderID, 1, &vertCStrPtr, cast(GLint*)null);
     glCompileShader(vertShaderID);
 
     glGetShaderiv(vertShaderID, GL_COMPILE_STATUS, &result);
@@ -131,7 +138,7 @@ GLuint makeShaders(string vertShaderSource, string fragShaderSource) {
     writeln("Compiling Fragment Shader");
     const GLchar* fragCStrPtr = fragShaderSource.toStringz();
     debug writeln("Fragment Shader: ", fragShaderSource); 
-    glShaderSource(fragShaderID, 1, &fragCStrPtr, cast(GLint*)0);
+    glShaderSource(fragShaderID, 1, &fragCStrPtr, cast(GLint*)null);
     glCompileShader(fragShaderID);
 
     glGetShaderiv(fragShaderID, GL_COMPILE_STATUS, &result);
