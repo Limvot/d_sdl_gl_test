@@ -94,13 +94,85 @@ void main() {
     glDisableVertexAttribArray(0);
     
     SDL_GL_SwapWindow(window); 
+
+    bool running = true;
+
     
-    SDL_Delay(2000);
+    bool left = false;
+    bool right = false;
+    bool up = false;
+    bool down = false;
+
+    while(running){
+        SDL_Event event;
+        handleInput(&event, &left, &right, &up, &down, &running);
+
+        SDL_Delay(1000/60);
+    }
 
     //Finish up and exit
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void handleInput(SDL_Event *event, bool *left, bool *right, bool *up, bool *down, bool *running){
+    while( SDL_PollEvent( event ) ){
+            /* We are only worried about SDL_KEYDOWN and SDL_KEYUP events */
+            switch( event.type ){
+              case SDL_KEYDOWN:
+                switch(event.key.keysym.sym){
+                    case SDLK_LEFT:
+                        writeln("LEFT DETECTED");
+                        *left = true;
+                        break;
+                    case SDLK_RIGHT:
+                        writeln("RIGHT DETECTED");
+                        *right = true;
+                        break;
+                    case SDLK_UP:
+                        writeln("UP DETECTED");
+                        *up = true;
+                        break;
+                    case SDLK_DOWN:
+                        writeln("DOWN DETECTED");
+                        *down = true;
+                        break;
+                    case SDLK_ESCAPE:
+                        *running = false;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
+              case SDL_KEYUP:
+                switch(event.key.keysym.sym){
+                    case SDLK_LEFT:
+                        *left = false;
+                        break;
+                    case SDLK_RIGHT:
+                        *right = false;
+                        break;
+                    case SDLK_UP:
+                        *up = false;
+                        break;
+                    case SDLK_DOWN:
+                        *down = false;
+                        break;
+                    case SDLK_ESCAPE:
+                        *running = false;
+                        break;
+                    default:
+                        break;
+                }
+                writeln("Key release detected");
+                break;
+
+              default:
+                break;
+            }
+        }
 }
 
 string simpleVertShaderSource = "
