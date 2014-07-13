@@ -5,7 +5,7 @@ import std.string;
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 
-immutable char* WindowTitle = "Hello Derelict - SDl2!";
+immutable char* WindowTitle = "Hello Derelict - SDl2, OpenGL!";
 immutable uint windowX = 512;
 immutable uint windowY = 512;
 
@@ -23,7 +23,10 @@ void main() {
         writeln("SDL2 failed to init: ", SDL_GetError());
         return;
     }
-    //Ok, we want an OpenGL 3.2 context
+    //Ok, we want an OpenGL 3.3 context
+    //Mac needs this, maybe
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
@@ -122,7 +125,7 @@ GLuint makeShaders(string vertShaderSource, string fragShaderSource) {
     int logLength;
 
     //Compile Vertex Shader
-    writeln("Compiling Vertex Shader");
+    debug writeln("Compiling Vertex Shader");
     const GLchar* vertCStrPtr = vertShaderSource.toStringz();
     debug writeln("Vertex Shader: ", vertShaderSource); 
     glShaderSource(vertShaderID, 1, &vertCStrPtr, cast(GLint*)null);
@@ -132,10 +135,10 @@ GLuint makeShaders(string vertShaderSource, string fragShaderSource) {
     glGetShaderiv(vertShaderID, GL_INFO_LOG_LENGTH, &logLength);
     char[] vertShaderLog = new char[logLength];
     glGetShaderInfoLog(vertShaderID, logLength, cast(GLsizei*)null, vertShaderLog.ptr);
-    writeln("Vertex Shader Info Log: ", vertShaderLog);
+    debug writeln("Vertex Shader Info Log: ", vertShaderLog);
 
     //Compile Fragment Shader
-    writeln("Compiling Fragment Shader");
+    debug writeln("Compiling Fragment Shader");
     const GLchar* fragCStrPtr = fragShaderSource.toStringz();
     debug writeln("Fragment Shader: ", fragShaderSource); 
     glShaderSource(fragShaderID, 1, &fragCStrPtr, cast(GLint*)null);
@@ -145,10 +148,10 @@ GLuint makeShaders(string vertShaderSource, string fragShaderSource) {
     glGetShaderiv(vertShaderID, GL_INFO_LOG_LENGTH, &logLength);
     char[] fragShaderLog = new char[logLength];
     glGetShaderInfoLog(vertShaderID, logLength, cast(GLsizei*)null, fragShaderLog.ptr);
-    writeln("Fragment Shader Info Log: ", fragShaderLog);
+    debug writeln("Fragment Shader Info Log: ", fragShaderLog);
     
     //Link them
-    writeln("Linking Program");
+    debug writeln("Linking Program");
     glAttachShader(programID, vertShaderID);
     glAttachShader(programID, fragShaderID);
     glLinkProgram(programID);
@@ -157,7 +160,7 @@ GLuint makeShaders(string vertShaderSource, string fragShaderSource) {
     glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &logLength);
     char[] programLog = new char[logLength];
     glGetShaderInfoLog(vertShaderID, logLength, cast(GLsizei*)null, programLog.ptr);
-    writeln("Program Info Log: ", programLog);
+    debug writeln("Program Info Log: ", programLog);
 
     glDeleteShader(vertShaderID);
     glDeleteShader(fragShaderID);
