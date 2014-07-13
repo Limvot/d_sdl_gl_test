@@ -4,6 +4,7 @@ import std.string;
 //OpenGL and SDL
 import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
+import derelict.sdl2.net;
 
 immutable char* WindowTitle = "Hello Derelict - SDl2, OpenGL!";
 immutable uint windowX = 512;
@@ -15,6 +16,9 @@ void main() {
     
     //Load SDL2
     DerelictSDL2.load();
+
+    //Load SDL_net
+    DerelictSDL2Net.load();
 
     //Create a contexted with SDL 2
     SDL_Window *window;
