@@ -1,7 +1,7 @@
 {
     "name": "sdl_gl_test",
     "description": "A test to play around with D, DUB, and the Dirlect bindings to SDL2 and OpenGL",
-    "autors": ["Nathan Braswell"],
+    "autors": ["Nathan Braswell", "Preston Turner"],
     "homepage": "http://github.com/Limvot",
     "licence": "CC0/Public Domain",
     "dependencies": {
