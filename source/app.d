@@ -7,8 +7,10 @@ import derelict.sdl2.sdl;
 import derelict.sdl2.net;
 
 immutable char* WindowTitle = "Hello Derelict - SDl2, OpenGL!";
-immutable uint windowX = 512;
-immutable uint windowY = 512;
+immutable uint windowX = 128;
+immutable uint windowY = 128;
+
+TCPsocket socket;
 
 void main() {
     //Loading OpenGL versions 1.0 and 1.1
@@ -19,6 +21,46 @@ void main() {
 
     //Load SDL_net
     DerelictSDL2Net.load();
+
+    IPaddress ip;
+    //TCPsocket socket;
+    char buffer[5];
+
+    if (SDLNet_Init() < 0) {
+        writeln("SDLNet Init failure: ", SDLNet_GetError());
+        return;
+    }
+
+    // Create a socket set to hold our sockets
+    SDLNet_SocketSet socketSet = SDLNet_AllocSocketSet(1);
+
+    if (SDLNet_ResolveHost(&ip, "127.0.0.1", 1234) < 0) {
+        writeln("SDLNet ResolveHost failure: ", SDLNet_GetError());
+        return;
+    }
+    socket = SDLNet_TCP_Open(&ip);
+    if (!socket) {
+        writeln("SDLNet TCP_Open failure: ", SDLNet_GetError());
+        return;
+    }
+
+    // Add our socket to our socket set
+    SDLNet_TCP_AddSocket(socketSet, socket);
+
+    // Check for stuff coming in, wait for half a second
+    SDLNet_CheckSockets(socketSet, 500);
+
+    buffer = "hello";
+    int len = 5;
+
+    // Send a message to the server.
+    writeln("Sending a message to the server.");
+    int sent = SDLNet_TCP_Send(socket, cast(void*)buffer, len);
+    if (sent < len)
+        writeln("Failed to send.");
+    else
+        writeln("Sent!");
+
 
     //Create a contexted with SDL 2
     SDL_Window *window;
@@ -117,6 +159,8 @@ void main() {
     //Finish up and exit
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
+    SDLNet_TCP_Close(socket);
+    SDLNet_Quit();
     SDL_Quit();
 }
 
@@ -141,6 +185,17 @@ void handleInput(SDL_Event *event, bool *left, bool *right, bool *up, bool *down
                     case SDLK_DOWN:
                         writeln("DOWN DETECTED");
                         *down = true;
+                        break;
+                    case SDLK_RETURN:
+                        // Send a message to the server.
+                        writeln("Sending a message to the server.");
+                        char buffer[5] = "howdy";
+                        int len = 5;
+                        int sent = SDLNet_TCP_Send(socket, cast(void*)buffer, len);
+                        if (sent < len)
+                            writeln("Failed to send.");
+                        else
+                            writeln("Sent!");
                         break;
                     case SDLK_ESCAPE:
                         *running = false;
@@ -167,10 +222,13 @@ void handleInput(SDL_Event *event, bool *left, bool *right, bool *up, bool *down
                     case SDLK_ESCAPE:
                         *running = false;
                         break;
+                    case SDLK_RETURN:
+                        break;
                     default:
+                        writeln("Key release detected");
                         break;
                 }
-                writeln("Key release detected");
+                
                 break;
 
               default:
