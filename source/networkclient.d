@@ -38,22 +38,6 @@ bool SDLNet_Initialize(const string host, ushort port){
     iBuffer = 0;
 
     return true;
-
-    /*
-    // Check for stuff coming in, wait for half a second
-    SDLNet_CheckSockets(socketSet, 500);
-
-    buffer = "hello";
-    int len = 5;
-
-    // Send a message to the server.
-    writeln("Sending a message to the server.");
-    int sent = SDLNet_TCP_Send(socket, cast(void*)buffer, len);
-    if (sent < len)
-        writeln("Failed to send.");
-    else
-    	writeln("Sent!");
-    */
 }
 
 void writestring(string s){
@@ -75,16 +59,16 @@ void clearbuffer(){
 	iBuffer = 0;
 }
 
-void sendmessage(TCPsocket socket){
-	sendmessage(socket, true);
+bool sendmessage(TCPsocket socket){
+	return sendmessage(socket, true);
 }
 
-void sendmessage(TCPsocket socket, bool clear){
+// Returns whether on not the message sent.
+boolean sendmessage(TCPsocket socket, bool clear){
 	int sent = SDLNet_TCP_Send(socket, cast(void*)buffer, iBuffer);
-    if (sent < iBuffer)
-        writeln("Failed to send.");
     if (clear)
     	clearbuffer();
+    return sent < iBuffer ? false : true;
 }
 
 TCPsocket getSocket(){
