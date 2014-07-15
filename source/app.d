@@ -27,7 +27,7 @@ void main() {
     string host = "127.0.0.1";
     SDLNet_Initialize(host, 1234);
 
-    clearbuffer();
+    clearbuffer(); // Should already be clear, but just in case...
     writestring("hello!");
     sendmessage(getSocket());
 
