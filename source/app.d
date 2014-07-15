@@ -34,13 +34,14 @@ void main() {
     // Create a socket set to hold our sockets
     SDLNet_SocketSet socketSet = SDLNet_AllocSocketSet(1);
 
-    if (SDLNet_ResolveHost(&ip, "127.0.0.1", 1234) < 0) {
+    if (SDLNet_ResolveHost(&ip, "localhost", 1234) < 0) {
         writeln("SDLNet ResolveHost failure: ", SDLNet_GetError());
         return;
     }
     socket = SDLNet_TCP_Open(&ip);
     if (!socket) {
         writeln("SDLNet TCP_Open failure: ", SDLNet_GetError());
+        writeln("Could not connect to server. ");
         return;
     }
 
@@ -85,6 +86,17 @@ void main() {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
+    /* // Attempted fullscreen, unsuccessful
+    SDL_VideoInfo* info = SDL_GetVideoInfo();
+    int bpp = *(*info.vfmt).BitsPerPixel;
+
+    int flags = SDL_OPENGL | SDL_FULLSCREEN;
+
+    if (SDL_SetVideoMode(width, height, bpp, flags) == 0){
+        writeln("SDL SetVideoMode failure: ", SDL_GetError());
+        return;
+    }
+
     //Create the window
     window = SDL_CreateWindow(WindowTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                 windowX, windowY, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
@@ -92,6 +104,7 @@ void main() {
         writeln("Failed to create SDL window: ", SDL_GetError());
         return;
     }
+    */
 
     //Create the OpenGL context
     SDL_ClearError();
